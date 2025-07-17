@@ -40,6 +40,7 @@ def evaluate_infix(expression):
                                               divide(left, right) if op == '/' else
                                               exponentiate(left, right))
     operands = []
+    operators = []
     i = 0
     while i < len(new_expression):
         if new_expression[i].isdigit():
@@ -49,6 +50,15 @@ def evaluate_infix(expression):
                 i += 1
             operands.append(num)
         elif new_expression[i] in "+-*/^":
+            if new_expression[i] == '-' and (i == 0 or new_expression[i-1] in "+-*/^("):
+                # Handle unary minus
+                num = 0
+                i += 1
+                while i < len(new_expression) and new_expression[i].isdigit():
+                    num = num * 10 + int(new_expression[i])
+                    i += 1
+                operands.append(-num)
+                continue
             while (operators and operators[-1] in "+-*/^" and
                    precedence(operators[-1]) >= precedence(new_expression[i])):
                 right = operands.pop()
@@ -67,6 +77,7 @@ def evaluate_infix(expression):
         operands.append(apply_operator(op, left, right))
     
     return operands[0]
+
 
 def prefix_evaluator(expression):
     """Evaluate a prefix expression."""
@@ -114,7 +125,7 @@ def postfix_evaluator(expression):
                 stack.append(subtract(left, right))
             elif token == "*":          
                 stack.append(multiply(left, right))
-            elif token = "/":
+            elif token == "/":
                 stack.append(divide(left, right))
             elif token == "^":
                 stack.append(exponentiate(left, right))
@@ -126,10 +137,37 @@ def postfix_evaluator(expression):
 
 def determine_expression_type(expression):
     """Determine the type of the expression."""
-    if expression.startswith('(') and expression.endswith(')'):
-        return 'infix'
-    elif expression.startswith('+') or expression.startswith('-') or expression.startswith('*') or expression.startswith('/'):
+    if expression.startswith('+') or expression.startswith('-') or expression.startswith('*') or expression.startswith('/') or expression.startswith('^'):
         return 'prefix'
-    else:
+    elif expression.endswith('+') or expression.endswith('-') or expression.endswith('*') or expression.endswith('/') or expression.endswith('^'):
         return 'postfix'
+    else:
+        return 'infix'
 
+def main():
+    """Demo of the calculator."""
+    print ("Welcome to the Calculator!")
+    print("You can enter mathematical expressions in infix, prefix, or postfix notation. Note that negative numbers are only supported in infix notation.")
+    while True:
+        expression = input("Enter a mathematical expression whether infix, prefix, or postfix(enter 'exit' to quit): ")
+        if expression.lower() == "exit":
+            print("Exiting the app. Have a good day!")
+            break
+        expression_type = determine_expression_type(expression)
+        try:
+            if expression_type == "infix":
+                result = evaluate_infix(expression)
+            elif expression_type == "prefix":
+                result = prefix_evaluator(expression)
+            elif expression_type == "postfix":
+                result = postfix_evaluator(expression)
+            else:            raise ValueError("Unknown expression type.")
+        
+            print(f"The result is: {result}")
+
+        except Error as e:
+            print(f"Error: Oops! Are you sure you entered the right input?? {e}")
+            continue
+
+if __name__ == "__main__":
+    main()
