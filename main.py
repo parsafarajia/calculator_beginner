@@ -168,6 +168,71 @@ def main():
         except Error as e:
             print(f"Error: Oops! Are you sure you entered the right input?? {e}")
             continue
+        
+def create_gui_from_main():
+    """Create a GUI with color and calculator looks, with buttons for each operation and numbers."""
+    import tkinter as tk
+    from tkinter import messagebox
+
+    class CalculatorApp:
+        def __init__(self, root):
+            self.root = root
+            self.root.title("Calculator")
+            self.expression = ""
+            self.create_widgets()
+
+        def create_widgets(self):
+            self.display = tk.Entry(self.root, width=25, font=('Arial', 20), bd=5, relief=tk.RIDGE, justify='right')
+            self.display.grid(row=0, column=0, columnspan=4, pady=10)
+
+            buttons = [
+                ('7', 1, 0), ('8', 1, 1), ('9', 1, 2), ('/', 1, 3),
+                ('4', 2, 0), ('5', 2, 1), ('6', 2, 2), ('*', 2, 3),
+                ('1', 3, 0), ('2', 3, 1), ('3', 3, 2), ('-', 3, 3),
+                ('0', 4, 0), ('.', 4, 1), ('^', 4, 2), ('+', 4, 3),
+                ('C', 5, 0), ('(', 5, 1), (')', 5, 2), ('=', 5, 3)
+            ]
+
+            for (text, row, col) in buttons:
+                action = lambda x=text: self.on_button_click(x)
+                tk.Button(self.root, text=text, width=5, height=2, font=('Arial', 16), command=action)\
+                    .grid(row=row, column=col, padx=2, pady=2)
+
+        def on_button_click(self, char):
+            if char == 'C':
+                self.expression = ""
+                self.display.delete(0, tk.END)
+            elif char == '=':
+                try:
+                    result = evaluate_infix(self.expression)
+                    self.display.delete(0, tk.END)
+                    self.display.insert(tk.END, str(result))
+                    self.expression = str(result)
+                except Exception as e:
+                    self.display.delete(0, tk.END)
+                    self.display.insert(tk.END, "Error")
+                    self.expression = ""
+            else:
+                self.expression += str(char)
+                self.display.delete(0, tk.END)
+                self.display.insert(tk.END, self.expression)
+
+    root = tk.Tk()
+    app = CalculatorApp(root)
+    root.mainloop()
 
 if __name__ == "__main__":
-    main()
+    create_gui_from_main()
+else:
+    print("This module is not meant to be run directly. Please import it in your main application.")
+    # Ensure all tests pass before running the main function
+    from test_main import test_evaluate_infix, test_prefix_evaluator, test_postfix_evaluator, test_determine_expression_type
+    test_evaluate_infix()
+    test_prefix_evaluator()
+    test_postfix_evaluator()
+    test_determine_expression_type()
+    print("All tests completed successfully!")  
+
+
+
+
