@@ -78,7 +78,6 @@ def evaluate_infix(expression):
     
     return operands[0]
 
-
 def prefix_evaluator(expression):
     """Evaluate a prefix expression."""
     stack = []
@@ -134,6 +133,7 @@ def postfix_evaluator(expression):
     if len(stack) != 1:
         raise ValueError("The expression is invalid.")
     return stack[0]
+
 
 def determine_expression_type(expression):
     """Determine the type of the expression."""
