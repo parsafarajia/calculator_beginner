@@ -124,4 +124,12 @@ def postfix_evaluator(expression):
         raise ValueError("The expression is invalid.")
     return stack[0]
 
+def determine_expression_type(expression):
+    """Determine the type of the expression."""
+    if expression.startswith('(') and expression.endswith(')'):
+        return 'infix'
+    elif expression.startswith('+') or expression.startswith('-') or expression.startswith('*') or expression.startswith('/'):
+        return 'prefix'
+    else:
+        return 'postfix'
 
