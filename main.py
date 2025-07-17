@@ -96,6 +96,32 @@ def prefix_evaluator(expression):
         raise ValueError("The expression is invalid.")
     return stack[0]
 
+def postfix_evaluator(expression):
+    """Evaluates a postfix expression"""
+    stack = []
+    tokens = expression.split()
+    for token in tokens:
+        if token.isdigit():
+            stack.append(int(token))
+        elif token in "+-*/":
+            if len(stack) < 2:
+                raise ValueError("Insufficient values in the expression.")
+            right = stack.pop()
+            left = stack.pop()
+            if token == "+":
+                stack.append(add(left, right))
+            elif token == "-":
+                stack.append(subtract(left, right))
+            elif token == "*":          
+                stack.append(multiply(left, right))
+            elif token = "/":
+                stack.append(divide(left, right))
+            elif token == "^":
+                stack.append(exponentiate(left, right))
+        else:
+            raise ValueError(f"Invalid token: {token}")
+    if len(stack) != 1:
+        raise ValueError("The expression is invalid.")
+    return stack[0]
 
-    
 
